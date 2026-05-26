@@ -302,7 +302,17 @@ Outlets were categorized into:
 - High
 
 Sales percentages were calculated for each outlet size.
-
+```sql
+SELECT 
+    Outlet_Size,
+    ROUND(SUM(Total_Sales),2) AS Total_Sales,
+    ROUND(
+        SUM(Total_Sales) * 100 /
+        (SELECT SUM(Total_Sales) FROM blinkit_data),2
+    ) AS Sales_Percentage
+FROM blinkit_data
+GROUP BY Outlet_Size;
+```
 ### Business Insight
 Helps identify which outlet size contributes the most revenue.
 
@@ -318,7 +328,14 @@ Sales were compared across:
 - Tier 1
 - Tier 2
 - Tier 3 locations
-
+```sql
+SELECT 
+    Outlet_Location_Type,
+    ROUND(SUM(Total_Sales),2) AS Total_Sales
+FROM blinkit_data
+GROUP BY Outlet_Location_Type
+ORDER BY Total_Sales DESC;
+```
 ### Business Insight
 Helps understand customer purchasing behavior across different regions.
 
@@ -341,7 +358,17 @@ across:
 - Supermarket Type 1
 - Supermarket Type 2
 - Supermarket Type 3
-
+```sql
+SELECT 
+    Outlet_Type,
+    ROUND(SUM(Total_Sales),2) AS Total_Sales,
+    ROUND(AVG(Total_Sales),2) AS Avg_Sales,
+    COUNT(Item_Identifier) AS Number_of_Items,
+    ROUND(AVG(Rating),2) AS Avg_Rating
+FROM blinkit_data
+GROUP BY Outlet_Type
+ORDER BY Total_Sales DESC;
+```
 ### Business Insight
 Helps identify the best-performing outlet types.
 
