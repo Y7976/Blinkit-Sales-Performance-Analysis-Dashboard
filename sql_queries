@@ -1,0 +1,96 @@
+use blinkit_db ;
+select * from blinkit_grocery_data;
+select COUNT(*) from blinkit_grocery_data;
+
+-- Data Cleaning
+SET SQL_SAFE_UPDATES = 0;
+UPDATE blinkit_grocery_data
+SET `Item Fat Content` = 
+CASE
+    WHEN `Item Fat Content` IN ('LF', 'low fat') THEN 'Low Fat'
+    WHEN `Item Fat Content` = 'reg' THEN 'Regular'
+    ELSE `Item Fat Content`
+END;
+select * from blinkit_grocery_data;
+
+-- Total Sales
+select CAST(SUM(Sales)/1000000 as DECIMAL(10,2)) as Total_Sales_Millon FROM blinkit_grocery_data; 
+
+-- Average Sales 
+select CAST(AVG(Sales) as DECIMAL(10,2)) as Average_Sales FROM blinkit_grocery_data; 
+
+-- Number of items 
+select count(*) as Num_of_Items FROM blinkit_grocery_data;
+
+-- Average Rating 
+select Round(AVG(Rating),2) as 'Average_Rating' FROM blinkit_grocery_data;
+
+-- (GRENUAL REQUIREMENTS) 1. find total_sales ,avg sales,avg rating and count of item for item fat content 
+SELECT `Item Fat Content`,ROUND(SUM(Sales), 2) as 'Total_Sales',
+            ROUND(AVG(Sales), 2) as 'Average_Sales',
+            ROUND(AVG(Rating), 2) as 'Average_Rating',
+            count(*) as 'No_of_items'
+FROM blinkit_grocery_data
+GROUP BY `Item Fat Content`;
+
+-- 2. Total_Sales by item type 
+select `Item Type` , Round(SUM(Sales),2) as Total_Sales_For_ItemType 
+FROM blinkit_grocery_data
+group by `Item Type` 
+order by Round(SUM(Sales),2);
+
+-- 3. Fat Content by Outlet for Total Sales
+SELECT `Outlet Location Type`,
+    Round(SUM(CASE 
+        WHEN `Item Fat Content` = 'Low Fat' 
+        THEN Sales 
+        ELSE 0 
+    END),2) AS Low_Fat,
+    round(SUM(CASE 
+        WHEN `Item Fat Content` = 'Regular' 
+        THEN Sales 
+        ELSE 0 
+    END),2) AS Regular
+FROM blinkit_grocery_data
+GROUP BY `Outlet Location Type`
+ORDER BY `Outlet Location Type`;
+
+-- 4. TotalSales by Outlet establishment 
+-- 4. Outlet Establishment Analysis
+
+SELECT `Outlet Establishment Year`,
+	    ROUND(SUM(Sales), 2) AS Total_Sales,
+        ROUND(AVG(Sales), 2) AS AVG_Sales,
+		ROUND(AVG(Rating), 2) AS AVG_Rating,
+        COUNT(*) AS No_Of_Items
+FROM blinkit_grocery_data
+GROUP BY `Outlet Establishment Year`
+ORDER BY Total_Sales DESC;
+
+-- 5. Percentage sales by outlet size 
+SELECT  `Outlet Size`,ROUND(SUM(Sales), 2) AS Total_Sales,
+    ROUND(
+        SUM(Sales) * 100.0 / 
+        (SELECT SUM(Sales) FROM blinkit_grocery_data),
+        2
+    ) AS Percentage_Of_Sales 
+FROM blinkit_grocery_data
+GROUP BY `Outlet Size`
+ORDER BY Percentage_Of_Sales DESC;
+
+-- 6.sales by outlet location 
+
+select `Outlet Location Type`, ROUND(SUM(Sales),2) as Total_Sales
+FROM blinkit_grocery_data
+GROUP BY `Outlet Location Type` 
+order by ROUND(SUM(Sales),2) ;
+
+-- 7. All matrices by outlet type 
+select `Outlet Type` , 
+        ROUND(SUM(Sales),2) as Total_Sales ,
+        ROUND(AVG(Sales),2) as Average_Sales ,
+        ROUND(AVG(Rating),2) as Average_Rating ,
+        count(*) as No_of_Items 
+From blinkit_grocery_data
+group by  `Outlet Type`
+Order by Total_Sales
