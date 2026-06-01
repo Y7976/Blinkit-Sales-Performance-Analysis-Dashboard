@@ -399,6 +399,8 @@ The SQL analysis helped generate insights that were later visualized in Power BI
 
 #  Power BI Dashboard Features
 
+
+![image alt](https://github.com/Y7976/Blinkit-Sales-Performance-Analysis-Dashboard/blob/735059e5021846ef40842306787fb68f6d30d515/Blinkit_data_dashboard.png)
 The dashboard includes:
 
 - KPI Cards
